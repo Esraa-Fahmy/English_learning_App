@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllsubCategories, createsubCategory, getSingleSubCategory, updatesubCategory, deletesubCategory, setCategoryIdToBody } = require('../controllers/subCategoryControler');
+const { getAllsubCategories, createsubCategory, getSingleSubCategory, updatesubCategory, deletesubCategory, setCategoryIdToBody, uploadsubCategoryImage, resizeImage } = require('../controllers/subCategoryControler');
 const { createSubCategoryValidation, getSubCategoryValidator, updateSubCategoryValidation, deleteSubCategoryValidation } = require('../validators/subCategoryValidator');
 
 const Auth = require('../controllers/authController')
@@ -15,6 +15,8 @@ router.route('/')
   .post(
     Auth.protect,
     Auth.allowedTo('admin'),
+       uploadsubCategoryImage, 
+        resizeImage, 
     setCategoryIdToBody,
     createSubCategoryValidation,
     createsubCategory

@@ -41,17 +41,18 @@ const setImageURL = (doc) => {
 
 
 
-  categorySchema.pre("findOneAndDelete", async function (next) {
-    const categoryId = this.getQuery()._id;
-  
-    // حذف كل الـ subCategories المرتبطة بالـ Category المحذوفة
-    await subCategoryModel.deleteMany({ category: categoryId });
-  
-    // حذف كل الـ Stories المرتبطة بالـ Category المحذوفة
-    await StoryModel.deleteMany({ category: categoryId });
-  
+  categorySchema.pre("deleteMany", async function (next) {
+    const categories = await this.model.find(this.getFilter()); // جلب جميع التصنيفات قبل الحذف
+    const categoryIds = categories.map(cat => cat._id);
+
+    // حذف كل الـ subCategories المرتبطة بهذه التصنيفات
+    await subCategoryModel.deleteMany({ category: { $in: categoryIds } });
+
+    // حذف كل الـ Stories المرتبطة بهذه التصنيفات
+    await StoryModel.deleteMany({ category: { $in: categoryIds } });
+
     next();
-  });
+});
 
 
 const CategoryModel = mongoose.model('Category', categorySchema)

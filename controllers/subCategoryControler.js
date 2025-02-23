@@ -1,6 +1,60 @@
 const asyncHandler = require('express-async-handler');
 const ApiError = require("../utils/apiError");
 const subCategoryModel = require('../models/subCategoryModel')
+const { v4: uuidv4 } = require('uuid');
+const sharp = require('sharp');
+const fs = require('fs');
+
+
+
+const {uploadSingleImage} = require('../midlewares/uploadImageMiddleWare')
+
+// Upload single image
+exports.uploadsubCategoryImage = uploadSingleImage('image');
+
+// Image processing
+exports.resizeImage = asyncHandler(async (req, res, next) => {
+  const filename = `subCategory-${uuidv4()}-${Date.now()}.jpeg`;
+
+  if (req.file) {
+
+  const path = "uploads/subCategories/";
+        if (!fs.existsSync(path)) {
+            fs.mkdirSync(path, { recursive: true });
+        }
+
+    await sharp(req.file.buffer)
+      .resize(600, 600)
+      .toFormat('jpeg')
+      .jpeg({ quality: 95 })
+      .toFile(`uploads/subCategories/${filename}`);
+
+    // Save image into our db
+    req.body.image = filename;
+  }
+
+  next();
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 exports.setCategoryIdToBody = (req, res , next) => {
@@ -34,8 +88,7 @@ exports.getAllsubCategories = asyncHandler(async (req, res) => {
 
 // subCategoryControler.js
 exports.createsubCategory = asyncHandler(async (req, res) => {
-    const { name, category } = req.body;
-    const subCategory = await subCategoryModel.create({ name, category });
+    const subCategory = await subCategoryModel.create(req.body);
     res.status(201).json({ data: subCategory });
   });
   

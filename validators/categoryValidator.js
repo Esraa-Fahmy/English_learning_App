@@ -22,6 +22,7 @@ exports.createCategoryValidation = [
 exports.updateCategoryValidation = [
   check('id').isMongoId().withMessage('Invalid category Id'),
   check('name').optional(),
+check('image').optional(),
   validatorMiddleware
 ]
 

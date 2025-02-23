@@ -3,6 +3,7 @@ const asyncHandler = require('express-async-handler');
 const ApiError = require("../utils/apiError");
 const { v4: uuidv4 } = require('uuid');
 const sharp = require('sharp');
+const fs = require('fs');
 
 
 const {uploadSingleImage} = require('../midlewares/uploadImageMiddleWare')
@@ -16,7 +17,10 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
 
   if (req.file) {
 
-
+  const path = "uploads/categories/";
+        if (!fs.existsSync(path)) {
+            fs.mkdirSync(path, { recursive: true });
+        }
 
     await sharp(req.file.buffer)
       .resize(600, 600)

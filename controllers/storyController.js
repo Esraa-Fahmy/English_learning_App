@@ -1,11 +1,13 @@
 const asyncHandler = require("express-async-handler");
 const ApiError = require("../utils/apiError");
+const fs = require('fs');
 const StoryModel = require("../models/storyModel");
 const User = require("../models/userModel");
 const { v4: uuidv4 } = require('uuid');
 const sharp = require('sharp');
 const { uploadMixOfImages } = require('../midlewares/uploadImageMiddleWare');
-const fs = require('fs');
+
+
 
 exports.uploadStoryImages = uploadMixOfImages([
     { name: 'imageCover', maxCount: 1 },

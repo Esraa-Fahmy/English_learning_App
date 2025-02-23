@@ -26,6 +26,8 @@ const app = express();
 
 app.use(cors('*'))
 app.use(express.json({ limit: '20kb' }));
+app.use(express.static(path.join(__dirname, "uploads")));
+
 // 1️⃣ تحديد عدد الطلبات (Rate Limiting)
 /*const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, 
@@ -40,7 +42,6 @@ app.use(express.json({ limit: '20kb' }));
 app.use(mongoSanitize());
 app.use(hpp());
 
-app.use(express.static(path.join(__dirname, "uploads")));
 
 
 
@@ -89,7 +90,7 @@ app.get('/profile', asyncHandler(async (req, res) => {
   const getUserFromGoogle = {
     userName: req.user.displayName,
     email: req.user.emails[0].value,
-    password: "jnknfekleflkkofkllknknwknwnqnqdwnkjn",
+    password: process.env.password,
   };
 
   let user = await User.findOne({ email: getUserFromGoogle.email });
