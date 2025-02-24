@@ -4,6 +4,8 @@ const dotenv = require("dotenv");
 const morgan = require("morgan");
 const passport = require('passport');
 const session = require('express-session');
+const compression = require('compression')
+
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const asyncHandler = require("express-async-handler");
 const cors = require('cors');
@@ -24,7 +26,8 @@ dbConnection();
 const app = express();
 
 
-app.use(cors('*'))
+app.use(cors('*'));
+app.use(compression());
 app.use(express.json({ limit: '20kb' }));
 app.use(express.static(path.join(__dirname, "uploads")));
 
