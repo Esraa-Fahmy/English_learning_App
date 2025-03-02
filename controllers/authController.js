@@ -141,22 +141,43 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   await user.save();
 
   // 3) Send the reset code via email
-  const message = `Hi ${user.userName},\nWe received a request to reset the password on your Kids-Story App Account.\n ${resetCode}\nEnter this code to complete the reset.\nThanks for helping us keep your account secure.\nThe Kids-Story Team`;
+  const message = `
+  <div style="font-family: Arial, sans-serif; text-align: center; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background-color: #f9f9f9;">
+    <h2 style="color: #333;">🔐 Password Reset Request</h2>
+    <p style="font-size: 16px; color: #555;">
+      Hi <strong>${user.userName}</strong>,<br>
+      We received a request to reset the password on your <strong>Kids-Story App</strong> Account.
+    </p>
+    <p style="font-size: 20px; font-weight: bold; color: #ff6b6b; letter-spacing: 2px; background-color: #fff; display: inline-block; padding: 10px 20px; border-radius: 5px; border: 1px solid #ff6b6b;">
+      ${resetCode}
+    </p>
+    <p style="font-size: 14px; color: #777; margin-top: 20px;">
+      Enter this code to complete the reset.<br>
+      Thanks for helping us keep your account secure.
+    </p>
+    <p style="font-size: 14px; color: #aaa;">
+      The <strong>Kids-Story</strong> Team
+    </p>
+  </div>
+`;
 
-  try {
-    await sendEmail({
-      email: user.email,
-      subject: "Your password reset code (valid for 10 min)",
-      message,
-    });
-  } catch (err) {
-    user.passwordResetCode = undefined;
-    user.passwordResetExpires = undefined;
-    user.passwordResetVerified = undefined;
+try {
+  await sendEmail({
+    email: user.email,
+    subject: "🔑 Your Password Reset Code (Valid for 10 min)",
+    message, // رسالة الإيميل بصيغة HTML
+    html: message, // أضيفي هذا السطر لإرسال الرسالة بتنسيق HTML
+  });
+} catch (err) {
+  user.passwordResetCode = undefined;
+  user.passwordResetExpires = undefined;
+  user.passwordResetVerified = undefined;
 
-    await user.save();
-    return next(new ApiError("There is an error in sending email", 500));
-  }
+  await user.save();
+  return next(new ApiError("There is an error in sending email", 500));
+}
+
+  
 
   res
     .status(200)

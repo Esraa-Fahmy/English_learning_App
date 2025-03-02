@@ -13,14 +13,16 @@ const sendEmail = async (options) => {
     },
   });
 
+  
 
  // 2) Define email options (like from, to, subject, email content)
  const mailOpts = {
-    from: 'Kids-Story App <esraaalrassas@gmail.com>',
-    to: options.email,
-    subject: options.subject,
-    text: options.message,
-  };
+  from: 'Kids-Story App <esraaalrassas@gmail.com>',
+  to: options.email,
+  subject: options.subject,
+  text: options.message, 
+  html: options.html || options.message, // يدعم HTML، ولو مش موجود يستخدم النص العادي
+};
 
   // 3) Send email
   await transporter.sendMail(mailOpts);
