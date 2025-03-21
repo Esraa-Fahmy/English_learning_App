@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 
 const User = require('../models/userModel');
+const StoryModel = require('../models/storyModel');
 
 // @desc    Add story to wishlist
 // @route   POST /api/v1/wishlist
