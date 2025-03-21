@@ -46,8 +46,7 @@ exports.resizeStoryImages = asyncHandler(async (req, res, next) => {
                   width: 400,
                   height: 400,
                   fit: 'inside',  // يحافظ على الأبعاد الأصلية دون تمدد أو تشويه
-                  withoutEnlargement: true  // يمنع تكبير الصور الأصغر من 600x600
-              })
+               })
                     .toFormat('jpeg')
                     .jpeg({ quality: 95 })
                     .toFile(`uploads/stories/${imageName}`);
@@ -63,7 +62,7 @@ exports.createStory = asyncHandler(async (req, res, next) => {
     const { subCategory } = req.body;
   
     const lastStory = await StoryModel.findOne({ subCategory }).sort({
-      createdAt: -1,
+      createdAt: 1,
     });
     const order = lastStory ? lastStory.order + 1 : 1;
   
@@ -101,28 +100,28 @@ exports.createStory = asyncHandler(async (req, res, next) => {
 
 
 
-exports.getAllStories = asyncHandler(async (req, res, next) => {
+  exports.getAllStories = asyncHandler(async (req, res, next) => {
     const page = req.query.page * 1 || 1;
     const limit = req.query.limit * 1 || 6;
     const skip = (page - 1) * limit;
 
-    
     const searchQuery = req.query.search
         ? { title: { $regex: req.query.search, $options: "i" } }
         : {};
 
-        const sortOption = req.query.sort === 'oldest' ? "createdAt" : "-createdAt";
-
+    // **التأكد من ترتيب البيانات حسب المطلوب**
+    const sortOption = req.query.sort === 'latest' ? { createdAt: -1 } : { createdAt: 1 };
 
     const stories = await StoryModel.find(searchQuery)
-        .sort(sortOption)
+        .sort(sortOption)  // 🔹 ترتيب حسب الطلب
         .skip(skip)
         .limit(limit)
-        .populate("category", "name") 
-        .populate("subCategory", "name"); 
+        .populate("category", "name")
+        .populate("subCategory", "name");
 
     res.status(200).json({ results: stories.length, data: stories });
 });
+
 
 
 
