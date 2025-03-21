@@ -145,80 +145,88 @@ exports.updateStory = asyncHandler(async (req, res, next) => {
 
 
 
-
-//حذف قصة
 exports.deleteStory = asyncHandler(async (req, res, next) => {
-    const { id } = req.params;
-    const story = await StoryModel.findByIdAndDelete(id);
-    if (!story) return next(new ApiError(`No story found for ID ${id}`, 404));
-    res.status(200).json({message: 'story deleted successfully'});
+  const { id } = req.params;
+
+  // ✅ البحث عن القصة أولًا قبل الحذف
+  const story = await StoryModel.findById(id);
+  if (!story) {
+      return next(new ApiError(`No story found for ID ${id}`, 404));
+  }
+
+  // ✅ حذف القصة
+  await StoryModel.findByIdAndDelete(id);
+
+  // ✅ إزالة القصة من `wishlist` و `readStories` لكل المستخدمين
+  await User.updateMany(
+      { $or: [{ wishlist: id }, { readStories: id }] },
+      { $pull: { wishlist: id, readStories: id } }
+  );
+
+  res.status(200).json({ message: "Story deleted successfully and removed from all users' wishlist and read stories." });
 });
 
 
 
 exports.markStoryAsRead = asyncHandler(async (req, res, next) => {
-    const { storyId } = req.params;
-    const userId = req.user._id;
-  
-   
-    const story = await StoryModel.findByIdAndUpdate(
-      storyId,
-      { isRead: true },
-      { new: true }
+  const { storyId } = req.params;
+  const userId = req.user._id;
 
-    );
-  
-    if (!story) {
+  // ✅ التحقق من أن القصة موجودة
+  const story = await StoryModel.findById(storyId);
+  if (!story) {
       return next(new ApiError(`No story found for ID ${storyId}`, 404));
-    }
-  
-    // إضافة القصة في مصفوفة readStories عند المستخدم
-    const user = await User.findByIdAndUpdate(
+  }
+
+  // تحديث الحالة إلى "مقروءة"
+  story.isRead = true;
+  await story.save();
+
+  // ✅ تحديث المستخدم وإضافة القصة إلى readStories
+  const user = await User.findByIdAndUpdate(
       userId,
       { $addToSet: { readStories: storyId } },
       { new: true }
-    );
-  
-    if (!user) {
+  );
+
+  if (!user) {
       return next(new ApiError(`No user found for ID ${userId}`, 404));
-    }
-  
-    res.status(200).json({
+  }
+
+  res.status(200).json({
       message: "Story marked as read successfully",
       readStories: user.readStories
-    });
   });
-  
+});
 
-  exports.unmarkStoryAsRead = asyncHandler(async (req, res, next) => {
-    const { storyId } = req.params;
-    const userId = req.user._id;
-  
- 
-    const story = await StoryModel.findByIdAndUpdate(
-      storyId,
-      { isRead: false },
-      { new: true }
-    );
-  
-    if (!story) {
+
+exports.unmarkStoryAsRead = asyncHandler(async (req, res, next) => {
+  const { storyId } = req.params;
+  const userId = req.user._id;
+
+  // ✅ التحقق من أن القصة موجودة
+  const story = await StoryModel.findById(storyId);
+  if (!story) {
       return next(new ApiError(`No story found for ID ${storyId}`, 404));
-    }
-  
- 
-    const user = await User.findByIdAndUpdate(
+  }
+
+  // تحديث الحالة إلى "غير مقروءة"
+  story.isRead = false;
+  await story.save();
+
+  // ✅ تحديث المستخدم وإزالة القصة من readStories
+  const user = await User.findByIdAndUpdate(
       userId,
       { $pull: { readStories: storyId } },
       { new: true }
-    );
-  
-    if (!user) {
+  );
+
+  if (!user) {
       return next(new ApiError(`No user found for ID ${userId}`, 404));
-    }
-  
-    res.status(200).json({
+  }
+
+  res.status(200).json({
       message: "Story unmarked as read successfully",
       readStories: user.readStories
-    });
   });
-  
+});
