@@ -17,13 +17,12 @@ const globalError = require("./midlewares/errmiddleware");
 dbConnection();
 
 const app = express();
-const server = http.createServer(app); // ⬅️ إنشاء سيرفر http
-const io = socketIo(server, { cors: { origin: "*" } }); // ⬅️ تشغيل WebSocket مع السماح بكل الـ origins
+const server = http.createServer(app); 
+const io = socketIo(server, { cors: { origin: "*" } }); 
 
-// حفظ io في `global` لاستخدامه في أي مكان
 global.io = io;
 
-// تأكيد اتصال WebSocket
+
 io.on("connection", (socket) => {
   console.log("🔌 Client connected to WebSocket");
 
@@ -58,7 +57,7 @@ app.all("*", (req, res, next) => {
 });
 app.use(globalError);
 
-// تشغيل السيرفر على PORT
+
 const PORT = process.env.PORT || 8000;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

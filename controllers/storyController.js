@@ -77,7 +77,7 @@ exports.createStory = asyncHandler(async (req, res, next) => {
   
     const categoryName = subCategoryData.category.name;
   
-    let notificationMessage =`تم اضافة محتوى جديد في ${categoryName} `;
+    let notificationMessage =`محتوى جديد مميز متاح الاّن في ${categoryName} !يساعد طفلك في تعلم كلمات جديدة بطريقة ممتعة`;
   
     io.emit("contentAdded", {
       message: notificationMessage,
@@ -85,7 +85,7 @@ exports.createStory = asyncHandler(async (req, res, next) => {
     });
   
     sendFirebaseNotification({
-      title: "English Learning App",
+      title: "احترف الانجليزية",
       body: notificationMessage,
     });
   
@@ -151,58 +151,6 @@ exports.deleteStory = asyncHandler(async (req, res, next) => {
 });
 
 
-
-/*exports.getNextStory = asyncHandler(async (req, res, next) => {
-    const { id } = req.params;
-    const story = await StoryModel.findById(id);
-
-    if (!story) {
-        return next(new ApiError(`No story found for ID ${id}`, 404));
-    }
-
-  
-    let nextStory = await StoryModel.findOne({ 
-        subCategory: story.subCategory, 
-        createdAt: { $gt: story.createdAt } // القصة اللي تم إنشاؤها بعد القصة الحالية
-    }).sort({ createdAt: 1 }); // تصاعديًا، بحيث يجيب أول قصة بعدها مباشرة
-
-    //لو مفيش قصة بعدها، يرجع لأول قصة في نفس التصنيف الفرعي
-    if (!nextStory) {
-        nextStory = await StoryModel.findOne({ 
-            subCategory: story.subCategory 
-        }).sort({ createdAt: 1 }); 
-    }
-
-    res.status(200).json({ next: nextStory });
-});
-
-
-
-
-
-exports.getPreviousStory = asyncHandler(async (req, res, next) => {
-    const { id } = req.params;
-    const story = await StoryModel.findById(id);
-
-    if (!story) {
-        return next(new ApiError(`No story found for ID ${id}`, 404));
-    }
-
- 
-    let prevStory = await StoryModel.findOne({ 
-        subCategory: story.subCategory, 
-        createdAt: { $lt: story.createdAt } // القصة اللي تم إنشاؤها قبل القصة الحالية
-    }).sort({ createdAt: -1 }); // تنازليًا، بحيث يجيب آخر قصة قبلها مباشرة
-
-    //  لو مفيش قصة قبلها، يرجع لآخر قصة 
-    if (!prevStory) {
-        prevStory = await StoryModel.findOne({ 
-            subCategory: story.subCategory 
-        }).sort({ createdAt: -1 });
-    }
-
-    res.status(200).json({ previous: prevStory });
-});*/
 
 exports.markStoryAsRead = asyncHandler(async (req, res, next) => {
     const { storyId } = req.params;
