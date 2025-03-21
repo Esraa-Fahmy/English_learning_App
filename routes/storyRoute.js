@@ -19,11 +19,12 @@ const {
 
 const Auth = require("../controllers/authController");
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true }); // لدعم تمرير subCategoryId من الـ parent route
 
+// Fetch all stories (support filtering by subCategoryId)
 router
   .route("/")
-  .get(getAllStories)
+  .get(getAllStories) 
   .post(
     Auth.protect,
     Auth.allowedTo("admin"),
@@ -51,8 +52,6 @@ router
     deleteStory
   );
 
-//router.route("/:id/next").get(getNextStory);
-//router.route("/:id/previous").get(getPreviousStory);
 router.patch("/:storyId/mark-as-read", Auth.protect, markStoryAsRead);
 router.patch("/:storyId/unmark-as-read", Auth.protect, unmarkStoryAsRead);
 

@@ -24,12 +24,6 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
         }
 
     await sharp(req.file.buffer)
-    .resize({
-        width: 500,
-        height: 500,
-        fit: 'inside',  // يحافظ على الأبعاد الأصلية دون تمدد أو تشويه
-        withoutEnlargement: true  // يمنع تكبير الصور الأصغر من 600x600
-    })
       .toFormat('jpeg')
       .jpeg({ quality: 95 })
       .toFile(`uploads/subCategories/${filename}`);

@@ -15,14 +15,7 @@ exports.createStoryValidator = [
     .isLength({ min: 3 })
     .withMessage("Story title is too short")
     .isLength({ max: 100 })
-    .withMessage("Story title is too long").custom(async (title) => {
-      
-            const existingStory = await StoryModel.findOne({ title });
-            if (existingStory) {
-              throw new Error("there is a story with this title"); 
-            }
-            return true;
-          }),
+    .withMessage("Story title is too long"),
 
     check("imageCover")
     .optional()

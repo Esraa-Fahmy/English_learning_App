@@ -26,7 +26,6 @@ exports.resizeStoryImages = asyncHandler(async (req, res, next) => {
             fs.mkdirSync(path, { recursive: true });
         }
         await sharp(req.files.imageCover[0].buffer)
-            .resize(2000, 1333)
             .toFormat('jpeg')
             .jpeg({ quality: 95 })
             .toFile(`uploads/stories/${imageCoverFileName}`);
@@ -42,11 +41,6 @@ exports.resizeStoryImages = asyncHandler(async (req, res, next) => {
                     fs.mkdirSync(path, { recursive: true });
                 }
                 await sharp(img.buffer)
-                .resize({
-                  width: 400,
-                  height: 400,
-                  fit: 'inside',  // يحافظ على الأبعاد الأصلية دون تمدد أو تشويه
-               })
                     .toFormat('jpeg')
                     .jpeg({ quality: 95 })
                     .toFile(`uploads/stories/${imageName}`);
@@ -100,20 +94,29 @@ exports.createStory = asyncHandler(async (req, res, next) => {
 
 
 
-  exports.getAllStories = asyncHandler(async (req, res, next) => {
+
+exports.getAllStories = asyncHandler(async (req, res, next) => {
     const page = req.query.page * 1 || 1;
     const limit = req.query.limit * 1 || 6;
     const skip = (page - 1) * limit;
 
-    const searchQuery = req.query.search
-        ? { title: { $regex: req.query.search, $options: "i" } }
-        : {};
+    let filter = {};
 
-    // **التأكد من ترتيب البيانات حسب المطلوب**
-    const sortOption = req.query.sort === 'latest' ? { createdAt: -1 } : { createdAt: 1 };
+    // ✅ إضافة فلترة بالـ subCategoryId في حالة وجوده في الـ params
+    if (req.params.subCategoryId) {
+        filter.subCategory = req.params.subCategoryId;
+    }
 
-    const stories = await StoryModel.find(searchQuery)
-        .sort(sortOption)  // 🔹 ترتيب حسب الطلب
+    // ✅ البحث بالكلمة المفتاحية إن وجدت
+    if (req.query.search) {
+        filter.title = { $regex: req.query.search, $options: "i" };
+    }
+
+    // ✅ ترتيب حسب الأحدث أو الأقدم
+    const sortOption = req.query.sort === "latest" ? { createdAt: -1 } : { createdAt: 1 };
+
+    const stories = await StoryModel.find(filter) // 🔹 البحث باستخدام الفلتر المحدث
+        .sort(sortOption)
         .skip(skip)
         .limit(limit)
         .populate("category", "name")

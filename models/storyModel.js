@@ -4,7 +4,8 @@ const storySchema = new mongoose.Schema({
     title: {
         type: String,
         required: [true, 'Story title is required'],
-        unique: true
+        unique: false,  // اجعلي `unique` بـ false أو احذفيه تمامًا
+
     },
     imageCover: {
         type: String,

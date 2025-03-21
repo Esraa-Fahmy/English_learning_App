@@ -7,6 +7,10 @@ const Auth = require('../controllers/authController')
 
 const router = express.Router({mergeParams: true});
 
+const storyRoutes = require("./storyRoute");
+
+router.use("/:subCategoryId/stories", storyRoutes );
+
 
 router.route('/')
 // subCategoryRoute.js

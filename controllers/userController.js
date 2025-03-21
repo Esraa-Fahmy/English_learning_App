@@ -24,12 +24,6 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
                 fs.mkdirSync(path, { recursive: true });
             }
     await sharp(req.file.buffer)
-    .resize({
-      width: 400,
-      height: 400,
-      fit: 'inside',  // يحافظ على الأبعاد الأصلية دون تمدد أو تشويه
-      withoutEnlargement: true  // يمنع تكبير الصور الأصغر من 600x600
-  })
       .toFormat('jpeg')
       .jpeg({ quality: 95 })
       .toFile(`uploads/users/${filename}`);
