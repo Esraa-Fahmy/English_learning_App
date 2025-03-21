@@ -3,9 +3,11 @@ const ApiError = require("../utils/apiError");
 const fs = require('fs');
 const StoryModel = require("../models/storyModel");
 const User = require("../models/userModel");
+const sendFirebaseNotification = require("./notifiations");
 const { v4: uuidv4 } = require('uuid');
 const sharp = require('sharp');
 const { uploadMixOfImages } = require('../midlewares/uploadImageMiddleWare');
+const subCategoryModel = require("../models/subCategoryModel");
 
 
 
@@ -52,20 +54,45 @@ exports.resizeStoryImages = asyncHandler(async (req, res, next) => {
 });
 
 
-
 exports.createStory = asyncHandler(async (req, res, next) => {
     const { subCategory } = req.body;
-
- 
-    const lastStory = await StoryModel.findOne({ subCategory })
-        .sort({ createdAt: -1 }); 
-
-    const order = lastStory ? lastStory.order + 1 : 1; 
-
+  
+    const lastStory = await StoryModel.findOne({ subCategory }).sort({
+      createdAt: -1,
+    });
+    const order = lastStory ? lastStory.order + 1 : 1;
+  
+    // إنشاء القصة
     const story = await StoryModel.create({ ...req.body, order });
+  
+    const subCategoryData = await subCategoryModel
+      .findById(subCategory)
+      .populate("category");
+  
+    if (!subCategoryData || !subCategoryData.category) {
+      return res
+        .status(400)
+        .json({ message: "Invalid subCategory ID or category not found" });
+    }
+  
+    const categoryName = subCategoryData.category.name;
+  
+    let notificationMessage =`تم اضافة محتوى جديد في ${categoryName} `;
+  
+    io.emit("contentAdded", {
+      message: notificationMessage,
+      story,
+    });
+  
+    sendFirebaseNotification({
+      title: "English Learning App",
+      body: notificationMessage,
+    });
+  
+    res.status(201).json({ data: story });
+  });
 
-    res.status(201).json({ data: story });
-});
+
 
 
 
