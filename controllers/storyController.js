@@ -42,7 +42,7 @@ exports.resizeStoryImages = asyncHandler(async (req, res, next) => {
                 }
                 await sharp(img.buffer)
                     .toFormat('jpeg')
-                    .jpeg({ quality: 95 })
+                    .jpeg({ quality: 100 })
                     .toFile(`uploads/stories/${imageName}`);
                 req.body.images.push(imageName);
             })

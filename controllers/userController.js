@@ -25,7 +25,7 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
             }
     await sharp(req.file.buffer)
       .toFormat('jpeg')
-      .jpeg({ quality: 95 })
+      .jpeg({ quality: 100 })
       .toFile(`uploads/users/${filename}`);
 
     // Save image into our db
