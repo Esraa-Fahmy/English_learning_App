@@ -31,19 +31,22 @@ const storySchema = new mongoose.Schema({
 
 
 const setImageURL = (doc) => {
-    if (doc.imageCover) {
+  if (doc.imageCover && !doc.imageCover.startsWith(process.env.BASE_URL)) {
       const imageUrl = `${process.env.BASE_URL}/stories/${doc.imageCover}`;
       doc.imageCover = imageUrl;
-    }
-    if (doc.images) {
+  }
+  if (doc.images) {
       const imagesList = [];
       doc.images.forEach((image) => {
-        const imageUrl = `${process.env.BASE_URL}/stories/${image}`;
-        imagesList.push(imageUrl);
+          const imageUrl = image.startsWith(process.env.BASE_URL) 
+              ? image 
+              : `${process.env.BASE_URL}/stories/${image}`;
+          imagesList.push(imageUrl);
       });
       doc.images = imagesList;
-    }
-  };
+  }
+};
+
   // findOne, findAll and update
   storySchema.post('init', (doc) => {
     setImageURL(doc);
