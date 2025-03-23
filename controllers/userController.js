@@ -42,17 +42,32 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
 // Get all users
 exports.getUsers = asyncHandler(async (req, res) => {
   const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 6;
+  const limit = req.query.limit * 1 || 10;
   const skip = (page - 1) * limit;
 
   const searchQuery = req.query.search
     ? { userName: { $regex: req.query.search, $options: "i" } }
     : {};
 
+  // ✅ حساب العدد الإجمالي للمستخدمين بعد الفلترة
+  const totalUsers = await User.countDocuments(searchQuery);
+
+  // ✅ حساب عدد الصفحات تلقائيًا
+  const totalPages = Math.ceil(totalUsers / limit);
+
   const users = await User.find(searchQuery).skip(skip).limit(limit);
 
-  res.status(200).json({ results: users.length, page, data: users });
+  res.status(200).json({ 
+    results: users.length, 
+    totalUsers, 
+    totalPages, 
+    currentPage: page,
+    hasNextPage: page < totalPages,
+    hasPrevPage: page > 1,
+    data: users 
+  });
 });
+
 
 // Create a new user
 exports.createUser = asyncHandler(async (req, res) => {

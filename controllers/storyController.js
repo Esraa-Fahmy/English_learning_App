@@ -94,8 +94,7 @@ exports.createStory = asyncHandler(async (req, res, next) => {
 
 
 
-
-exports.getAllStories = asyncHandler(async (req, res, next) => {
+  exports.getAllStories = asyncHandler(async (req, res, next) => {
     const page = req.query.page * 1 || 1;
     const limit = req.query.limit * 1 || 6;
     const skip = (page - 1) * limit;
@@ -115,6 +114,12 @@ exports.getAllStories = asyncHandler(async (req, res, next) => {
     // ✅ ترتيب حسب الأحدث أو الأقدم
     const sortOption = req.query.sort === "latest" ? { createdAt: -1 } : { createdAt: 1 };
 
+    // ✅ حساب العدد الإجمالي للقصص بعد الفلترة
+    const totalStories = await StoryModel.countDocuments(filter);
+
+    // ✅ حساب عدد الصفحات تلقائيًا
+    const totalPages = Math.ceil(totalStories / limit);
+
     const stories = await StoryModel.find(filter) // 🔹 البحث باستخدام الفلتر المحدث
         .sort(sortOption)
         .skip(skip)
@@ -122,8 +127,17 @@ exports.getAllStories = asyncHandler(async (req, res, next) => {
         .populate("category", "name")
         .populate("subCategory", "name");
 
-    res.status(200).json({ results: stories.length, data: stories });
+    res.status(200).json({ 
+        results: stories.length, 
+        totalStories, 
+        totalPages, 
+        currentPage: page,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+        data: stories 
+    });
 });
+
 
 
 

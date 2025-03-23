@@ -63,6 +63,7 @@ exports.setCategoryIdToBody = (req, res , next) => {
 
 
 
+
 exports.getAllsubCategories = asyncHandler(async (req, res) => {
     const page = req.query.page * 1  || 1;
     const limit = req.query.limit * 1 || 6;
@@ -75,13 +76,28 @@ exports.getAllsubCategories = asyncHandler(async (req, res) => {
         filterObject.name = { $regex: req.query.search, $options: "i" }; 
     }
 
+    // ✅ حساب العدد الإجمالي للتصنيفات الفرعية بعد الفلترة
+    const totalSubCategories = await subCategoryModel.countDocuments(filterObject);
+
+    // ✅ حساب عدد الصفحات تلقائيًا
+    const totalPages = Math.ceil(totalSubCategories / limit);
+
     const subCategories = await subCategoryModel.find(filterObject)
         .skip(skip)
         .limit(limit)
         .populate({ path: 'category', select: 'name -_id' });
 
-    res.status(200).json({ results: subCategories.length, page, data: subCategories });
+    res.status(200).json({ 
+        results: subCategories.length, 
+        totalSubCategories, 
+        totalPages, 
+        currentPage: page,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+        data: subCategories 
+    });
 });
+
 
 
 
