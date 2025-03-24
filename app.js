@@ -39,6 +39,9 @@ app.use(session({ secret: "secret", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+
+
+
 // Mount Routes
 app.use("/api/v1/categories", require("./routes/categoryRoute"));
 app.use("/api/v1/subCategories", require("./routes/subCategoryRoute"));

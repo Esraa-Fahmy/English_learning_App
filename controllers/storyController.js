@@ -8,7 +8,7 @@ const { v4: uuidv4 } = require('uuid');
 const sharp = require('sharp');
 const { uploadMixOfImages } = require('../midlewares/uploadImageMiddleWare');
 const subCategoryModel = require("../models/subCategoryModel");
-
+const Notification = require("../models/notificationsModel")
 
 
 exports.uploadStoryImages = uploadMixOfImages([
@@ -76,12 +76,20 @@ exports.createStory = asyncHandler(async (req, res, next) => {
     const categoryName = subCategoryData.category.name;
   
     let notificationMessage =`محتوى جديد مميز متاح الاّن في ${categoryName} !يساعد طفلك في تعلم كلمات جديدة بطريقة ممتعة`;
+    
   
     io.emit("contentAdded", {
       message: notificationMessage,
       story,
     });
   
+
+     // تخزين الإشعار في قاعدة البيانات مباشرة
+  await Notification.create({
+    message: notificationMessage,
+    storyId: story._id,  // ربط الإشعار بالقصة
+  });
+
     sendFirebaseNotification({
       title: "احترف الانجليزية",
       body: notificationMessage,
@@ -173,6 +181,7 @@ exports.deleteStory = asyncHandler(async (req, res, next) => {
 
   // ✅ حذف القصة
   await StoryModel.findByIdAndDelete(id);
+
 
   // ✅ إزالة القصة من `wishlist` و `readStories` لكل المستخدمين
   await User.updateMany(

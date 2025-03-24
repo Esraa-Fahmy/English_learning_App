@@ -57,7 +57,7 @@ const setImageURL = (doc) => {
     setImageURL(doc);
   });
   
-
+     
 const StoryModel = mongoose.model('Story', storySchema);
 module.exports = StoryModel;
  
