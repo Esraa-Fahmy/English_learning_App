@@ -31,10 +31,8 @@ exports.signupValidator = [
   check('password')
     .notEmpty()
     .withMessage('Password required')
-   .isLength({ min: 6 })
+   .isLength({ min: 4 })
     .withMessage('Password must be at least 8 characters')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*._-])/)
-    .withMessage('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*._-)')
     .custom((password, { req }) => {
       if (password !== req.body.passwordConfirm) {
         throw new Error('Password Confirmation incorrect');
@@ -61,9 +59,7 @@ exports.loginValidator = [
     check('password')
       .notEmpty()
       .withMessage('Password required')
-      .isLength({ min: 6 })
-      .withMessage('Password must be at least 8 characters')
-      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*._-])/)
+      .isLength({ min: 4 })
       .withMessage('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*._-)'),
     validatorMiddleware,
   ];
