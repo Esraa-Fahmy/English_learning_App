@@ -9,6 +9,8 @@ const {
   resizeStoryImages,
   getStory,
   deleteStory,
+  getNextStory,
+  getPreviousStory,
 } = require("../controllers/storyController");
 const {
   createStoryValidator,
@@ -54,5 +56,11 @@ router
 
 router.patch("/:storyId/mark-as-read", Auth.protect, markStoryAsRead);
 router.patch("/:storyId/unmark-as-read", Auth.protect, unmarkStoryAsRead);
+
+
+
+
+router.get("/:id/next", getNextStory);
+router.get("/:id/previous", getPreviousStory);
 
 module.exports = router;

@@ -256,3 +256,58 @@ exports.unmarkStoryAsRead = asyncHandler(async (req, res, next) => {
       readStories: user.readStories
   });
 });
+
+
+
+
+
+
+// ✅ جلب القصة التالية داخل نفس الـ SubCategory (مع الدوران لأول قصة)
+exports.getNextStory = async (req, res, next) => {
+  try {
+    const currentStory = await StoryModel.findById(req.params.id);
+    if (!currentStory) {
+      return res.status(404).json({ message: "القصة غير موجودة" });
+    }
+
+    // البحث عن القصة التالية داخل نفس الـ SubCategory
+    let nextStory = await StoryModel.findOne({
+      subCategory: currentStory.subCategory,
+      createdAt: { $gt: currentStory.createdAt },
+    }).sort({ createdAt: 1 });
+
+    // ✅ لو مفيش قصة بعدها، رجع أول قصة في نفس الـ SubCategory (Loop)
+    if (!nextStory) {
+      nextStory = await StoryModel.findOne({ subCategory: currentStory.subCategory }).sort({ createdAt: 1 });
+    }
+
+    res.status(200).json(nextStory);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ✅ جلب القصة السابقة داخل نفس الـ SubCategory (مع الدوران لآخر قصة)
+exports.getPreviousStory = async (req, res, next) => {
+  try {
+    const currentStory = await StoryModel.findById(req.params.id);
+    if (!currentStory) {
+      return res.status(404).json({ message: "القصة غير موجودة" });
+    }
+
+    // البحث عن القصة السابقة داخل نفس الـ SubCategory
+    let previousStory = await StoryModel.findOne({
+      subCategory: currentStory.subCategory,
+      createdAt: { $lt: currentStory.createdAt },
+    }).sort({ createdAt: -1 });
+
+    // ✅ لو مفيش قصة قبلها، رجع آخر قصة في نفس الـ SubCategory (Loop)
+    if (!previousStory) {
+      previousStory = await StoryModel.findOne({ subCategory: currentStory.subCategory }).sort({ createdAt: -1 });
+    }
+
+    res.status(200).json(previousStory);
+  } catch (error) {
+    next(error);
+  }
+};
