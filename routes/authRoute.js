@@ -1,6 +1,6 @@
 const express = require('express');
 const { signupValidator, loginValidator } = require('../validators/authValidator');
-const { signup, login, forgotPassword, verifyPassResetCode, resetPassword, guestLogin } = require('../controllers/authController');
+const { signup, login, forgotPassword, verifyPassResetCode, resetPassword, googleLogin } = require('../controllers/authController');
 
 
 
@@ -13,6 +13,7 @@ router.route('/forgetPassword').post(forgotPassword);
 router.route('/verifyResetCode').post(verifyPassResetCode);
 router.route('/resetPassword').put(resetPassword);
 
+router.post('/google-login', googleLogin);
 
 
 

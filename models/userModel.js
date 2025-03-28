@@ -4,6 +4,11 @@ const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema(
   {
+    uid: {
+      type: String, // ده هيكون الـ UID بتاع المستخدم من Firebase
+      unique: true,
+      sparse: true, 
+    },
     userName: {
       type: String,
       trim: true,
