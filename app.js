@@ -38,12 +38,7 @@ io.on("connection", (socket) => {
 
 // Middleware
 app.use(compression());
-// تفعيل CORS مع السماح لأي دومين
-app.use(cors({
-  origin: '*',  // السماح لكل الدومينات بالاتصال
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(cors('*'));
 app.use(express.json({ limit: "20kb" }));
 app.use(express.static(path.join(__dirname, "uploads")));
 //app.use(session({ secret: "secret", resave: false, saveUninitialized: true }));
