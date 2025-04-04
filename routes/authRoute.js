@@ -13,7 +13,7 @@ router.route('/forgetPassword').post(forgotPassword);
 router.route('/verifyResetCode').post(verifyPassResetCode);
 router.route('/resetPassword').put(resetPassword);
 
-router.post('/google-login', googleLogin);
+//router.post('/google-login', googleLogin);
 
 
 

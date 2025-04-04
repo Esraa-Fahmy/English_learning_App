@@ -253,10 +253,12 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
 
 
 
-exports.googleLogin = asyncHandler(async (req, res, next) => {
+/*exports.googleLogin = asyncHandler(async (req, res, next) => {
   try {
     // ✅ التوكن يجي من الهيدر بدل الـ Body
     const idToken = req.headers.authorization?.split(" ")[1];
+    console.log("Received Token:", idToken); // ✅ طباعة التوكن للتحقق
+
 
     if (!idToken) {
       return next(new ApiError("idToken is required", 400));
@@ -293,6 +295,7 @@ exports.googleLogin = asyncHandler(async (req, res, next) => {
     console.error(error);
     return next(new ApiError("Invalid Google token", 401));
   }
-});
+});*/
+
 
 
