@@ -9,17 +9,17 @@ const Auth = require('../controllers/authController')
 const subCategoriesRoute = require('./subCategoryRoute')
 const router = express.Router();
 
-  
+
 router.use('/:categoryId/subcategories', subCategoriesRoute)
 
 
 router.route('/')
 .get(getAllCategories)
-.post(Auth.protect, 
+.post(Auth.protect,
     Auth.allowedTo('admin'),
-    uploadCategoryImage, 
-    resizeImage, 
-    createCategoryValidation, 
+    uploadCategoryImage,
+    resizeImage,
+    createCategoryValidation,
     createCategory);
 router.route('/:id')
 .get(getCategoryValidator, getSingleCategory)

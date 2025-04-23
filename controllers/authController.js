@@ -5,7 +5,6 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const sendEmail = require("../utils/sendEmail");
-const admin = require("../config/firebase")
 const createToken = require("../utils/createToken");
 
 // @desc    Signup
@@ -177,7 +176,7 @@ try {
   return next(new ApiError("There is an error in sending email", 500));
 }
 
-  
+
 
   res
     .status(200)
@@ -250,52 +249,6 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
     token,
   });
 });
-
-
-
-/*exports.googleLogin = asyncHandler(async (req, res, next) => {
-  try {
-    // ✅ التوكن يجي من الهيدر بدل الـ Body
-    const idToken = req.headers.authorization?.split(" ")[1];
-    console.log("Received Token:", idToken); // ✅ طباعة التوكن للتحقق
-
-
-    if (!idToken) {
-      return next(new ApiError("idToken is required", 400));
-    }
-
-    // ✅ التحقق من الـ idToken باستخدام Firebase Admin SDK
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
-    const { uid, email, name, picture } = decodedToken;
-
-    // ✅ البحث عن المستخدم في قاعدة البيانات
-    let user = await User.findOne({ email });
-
-    // ✅ إذا لم يكن المستخدم موجودًا، نقوم بإنشائه
-    if (!user) {
-      user = new User({
-        uid,
-        email,
-        userName: name,
-        profileImg: picture,
-      });
-      await user.save();
-    }
-
-    // ✅ إنشاء توكن JWT للمستخدم
-    const token = createToken(user._id);
-
-    // ✅ إرسال بيانات المستخدم والتوكن للفرونت إند
-    res.status(200).json({
-      message: "Login successful",
-      user,
-      token,
-    });
-  } catch (error) {
-    console.error(error);
-    return next(new ApiError("Invalid Google token", 401));
-  }
-});*/
 
 
 

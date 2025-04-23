@@ -26,10 +26,8 @@ exports.createUserValidator = [
   check('password')
     .notEmpty()
     .withMessage('Password required')
-    .isLength({ min: 6 })
-    .withMessage('Password must be at least 8 characters')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*._-])/)
-    .withMessage('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*._-)')
+    .isLength({ min: 4 })
+    .withMessage('Password must be at least 4 characters')
     .custom((password, { req }) => {
       if (password !== req.body.passwordConfirm) {
         throw new Error('Password Confirmation incorrect');
@@ -57,13 +55,14 @@ exports.getUserValidator = [
   validatorMiddleware,
 ];
 
+
 exports.updateUserValidator = [
   check('id').isMongoId().withMessage('Invalid User id format'),
   check('userName')
     .optional(),
   check('email')
-    .notEmpty()
-    .withMessage('Email required')
+  .optional()
+
     .isEmail()
     .withMessage('Invalid email address')
     .custom((val) =>
@@ -149,7 +148,7 @@ exports.updateLoggedUserDataValidator = [
     .optional()
     .isMobilePhone(['ar-EG', 'ar-SA'])
     .withMessage('Invalid phone number only accepted Egy and SA Phone numbers'),
-    check('profileImg')  
+    check('profileImg')
     .optional()
     .isString().withMessage('Profile image must be a string (filename)'),
 

@@ -32,4 +32,4 @@ router.route('/:id')
 .put( Auth.allowedTo('admin'), uploadUserImage, resizeImage, updateUserValidator , updateUser)
 .delete( Auth.allowedTo('admin'), deleteUserValidator, deleteUser);
 
-module.exports = router;
+module.exports = router;  

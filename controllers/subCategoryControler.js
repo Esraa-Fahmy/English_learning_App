@@ -73,7 +73,7 @@ exports.getAllsubCategories = asyncHandler(async (req, res) => {
     if (req.params.categoryId) filterObject = { category: req.params.categoryId };
 
     if (req.query.search) {
-        filterObject.name = { $regex: req.query.search, $options: "i" }; 
+        filterObject.name = { $regex: req.query.search, $options: "i" };
     }
 
     // ✅ حساب العدد الإجمالي للتصنيفات الفرعية بعد الفلترة
@@ -87,14 +87,14 @@ exports.getAllsubCategories = asyncHandler(async (req, res) => {
         .limit(limit)
         .populate({ path: 'category', select: 'name -_id' });
 
-    res.status(200).json({ 
-        results: subCategories.length, 
-        totalSubCategories, 
-        totalPages, 
+    res.status(200).json({
+        results: subCategories.length,
+        totalSubCategories,
+        totalPages,
         currentPage: page,
         hasNextPage: page < totalPages,
         hasPrevPage: page > 1,
-        data: subCategories 
+        data: subCategories
     });
 });
 
@@ -106,7 +106,7 @@ exports.createsubCategory = asyncHandler(async (req, res) => {
     const subCategory = await subCategoryModel.create(req.body);
     res.status(201).json({ data: subCategory });
   });
-  
+
 
 
 exports.getSingleSubCategory = asyncHandler(async (req, res, next) => {
@@ -118,16 +118,15 @@ exports.getSingleSubCategory = asyncHandler(async (req, res, next) => {
     }
     res.status(200).json({ data: subCategory })
 });
- 
+
 
 
 exports.updatesubCategory = asyncHandler( async (req, res, next) => {
 const { id } = req.params;
-const { name, category} = req.body;
 
 const subCategory = await subCategoryModel.findByIdAndUpdate(
     {_id: id},
-    { name , category},
+       req.body,
     { new: true}
 );
 
@@ -144,10 +143,8 @@ exports.deletesubCategory = asyncHandler(async (req, res, next) => {
 
     const subCategory = await subCategoryModel.findByIdAndDelete(id);
 
-    
+
 if (!subCategory){
     return next(new ApiError(`No subCategory for this id ${id}`, 404));
 }
 res.status(200).json({ message : 'subCategory deleted successfully' })});
-
-

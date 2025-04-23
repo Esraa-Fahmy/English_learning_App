@@ -26,7 +26,7 @@ const router = express.Router({ mergeParams: true }); // لدعم تمرير sub
 // Fetch all stories (support filtering by subCategoryId)
 router
   .route("/")
-  .get(getAllStories) 
+  .get(getAllStories)
   .post(
     Auth.protect,
     Auth.allowedTo("admin"),

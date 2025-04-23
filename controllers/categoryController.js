@@ -43,7 +43,7 @@ exports.getAllCategories = asyncHandler(async (req, res) => {
 
 
     const searchQuery = req.query.search ? {
-        name: { $regex: req.query.search, $options: "i" } 
+        name: { $regex: req.query.search, $options: "i" }
     } : {};
 
     const categories = await CategoryModel.find(searchQuery)
@@ -55,11 +55,11 @@ res.status(200).json({results: categories.length, page, data: categories})
 
 
 exports.createCategory = asyncHandler(async (req, res) => {
-    
+
 
 const category = await CategoryModel.create(req.body);
 res.status(201).json({ data: category})
-   
+
 });
 
 
@@ -71,7 +71,7 @@ exports.getSingleCategory = asyncHandler(async (req, res, next) => {
     }
     res.status(200).json({ data: category })
 });
- 
+
 
 
 exports.updateCategory = asyncHandler( async (req, res, next) => {
@@ -97,10 +97,8 @@ exports.deleteCategory = asyncHandler(async (req, res, next) => {
 
     const  category = await CategoryModel.findByIdAndDelete(id);
 
-    
+
 if (!category){
     return next(new ApiError(`No category for this id ${id}`, 404));
 }
 res.status(200).json({ message : 'category deleted successfully' })});
-
-

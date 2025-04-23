@@ -25,7 +25,7 @@ const storySchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-  
+
 }, { timestamps: true });
 
 
@@ -38,8 +38,8 @@ const setImageURL = (doc) => {
   if (doc.images) {
       const imagesList = [];
       doc.images.forEach((image) => {
-          const imageUrl = image.startsWith(process.env.BASE_URL) 
-              ? image 
+          const imageUrl = image.startsWith(process.env.BASE_URL)
+              ? image
               : `${process.env.BASE_URL}/stories/${image}`;
           imagesList.push(imageUrl);
       });
@@ -51,13 +51,13 @@ const setImageURL = (doc) => {
   storySchema.post('init', (doc) => {
     setImageURL(doc);
   });
-  
+
   // create
   storySchema.post('save', (doc) => {
     setImageURL(doc);
   });
-  
-     
+
+
 const StoryModel = mongoose.model('Story', storySchema);
 module.exports = StoryModel;
- 
+                                

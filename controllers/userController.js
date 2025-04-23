@@ -57,14 +57,14 @@ exports.getUsers = asyncHandler(async (req, res) => {
 
   const users = await User.find(searchQuery).skip(skip).limit(limit);
 
-  res.status(200).json({ 
-    results: users.length, 
-    totalUsers, 
-    totalPages, 
+  res.status(200).json({
+    results: users.length,
+    totalUsers,
+    totalPages,
     currentPage: page,
     hasNextPage: page < totalPages,
     hasPrevPage: page > 1,
-    data: users 
+    data: users
   });
 });
 
@@ -89,20 +89,21 @@ exports.getUserById = asyncHandler(async (req, res, next) => {
 // Update user
 exports.updateUser = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const user = await User.findByIdAndUpdate(id,
-    {
-        userName: req.body.userName,
-        phone: req.body.phone,
-        email: req.body.email,
-        profileImg: req.body.profileImg,
-        role: req.body.role,
-    }, 
-    { new: true });
 
-  if (!user) {
+  // استخدام findByIdAndUpdate لتحديث بيانات المستخدم
+  const updatedUser = await User.findByIdAndUpdate(
+    { _id: id },
+    req.body,  // البيانات الجديدة التي سيتم تحديثها
+    { new: true }  // العودة بالوثيقة المحدثة
+  );
+
+  // التحقق إذا كان المستخدم موجودًا
+  if (!updatedUser) {
     return next(new ApiError(`No user found for ID ${id}`, 404));
   }
-  res.status(200).json({ data: user });
+
+  // إرسال البيانات المحدثة في الاستجابة
+  res.status(200).json({ data: updatedUser });
 });
 
 

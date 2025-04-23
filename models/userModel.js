@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema(
     uid: {
       type: String, // ده هيكون الـ UID بتاع المستخدم من Firebase
       unique: true,
-      sparse: true, 
+      sparse: true,
     },
     userName: {
       type: String,
@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema(
       required: [true, 'password required'],
       minlength: [4, 'Too short password'],
       select:false,
-   
+
     },
     passwordChangedAt: Date,
     passwordResetCode: String,
@@ -53,7 +53,7 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: 'Story'
     }],
-    
+
   },
 
   { timestamps: true }
@@ -71,7 +71,7 @@ const setImageURL = (doc) => {
   userSchema.post('init', (doc) => {
     setImageURL(doc);
   });
-  
+
   // create
   userSchema.post('save', (doc) => {
     setImageURL(doc);
@@ -85,10 +85,10 @@ const setImageURL = (doc) => {
     this.password = await bcrypt.hash(this.password, 12);
     next();
   });
-  
+
 
 
 
 const User = mongoose.model('User', userSchema);
 
-module.exports = User;
+module.exports = User;  

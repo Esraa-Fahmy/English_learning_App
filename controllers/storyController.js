@@ -54,35 +54,35 @@ exports.resizeStoryImages = asyncHandler(async (req, res, next) => {
 
 exports.createStory = asyncHandler(async (req, res, next) => {
     const { subCategory } = req.body;
-  
+
     const lastStory = await StoryModel.findOne({ subCategory }).sort({
       createdAt: 1,
     });
     const order = lastStory ? lastStory.order + 1 : 1;
-  
+
     // إنشاء القصة
     const story = await StoryModel.create({ ...req.body, order });
-  
+
     const subCategoryData = await subCategoryModel
       .findById(subCategory)
       .populate("category");
-  
+
     if (!subCategoryData || !subCategoryData.category) {
       return res
         .status(400)
         .json({ message: "Invalid subCategory ID or category not found" });
     }
-  
+
     const categoryName = subCategoryData.category.name;
-  
+
     let notificationMessage =`محتوى جديد مميز متاح الاّن في ${categoryName} !يساعد طفلك في تعلم كلمات جديدة بطريقة ممتعة`;
-    
-  
+
+
     io.emit("contentAdded", {
       message: notificationMessage,
       story,
     });
-  
+
 
      // تخزين الإشعار في قاعدة البيانات مباشرة
   await Notification.create({
@@ -94,7 +94,7 @@ exports.createStory = asyncHandler(async (req, res, next) => {
       title: "احترف الانجليزية",
       body: notificationMessage,
     });
-  
+
     res.status(201).json({ data: story });
   });
 
@@ -135,14 +135,14 @@ exports.createStory = asyncHandler(async (req, res, next) => {
         .populate("category", "name")
         .populate("subCategory", "name");
 
-    res.status(200).json({ 
-        results: stories.length, 
-        totalStories, 
-        totalPages, 
+    res.status(200).json({
+        results: stories.length,
+        totalStories,
+        totalPages,
         currentPage: page,
         hasNextPage: page < totalPages,
         hasPrevPage: page > 1,
-        data: stories 
+        data: stories
     });
 });
 

@@ -19,8 +19,8 @@ router.route('/')
   .post(
     Auth.protect,
     Auth.allowedTo('admin'),
-       uploadsubCategoryImage, 
-        resizeImage, 
+       uploadsubCategoryImage,
+        resizeImage,
     setCategoryIdToBody,
     createSubCategoryValidation,
     createsubCategory
@@ -28,7 +28,7 @@ router.route('/')
 
 router.route('/:id')
 .get(getSubCategoryValidator, getSingleSubCategory)
-.put(Auth.protect,  Auth.allowedTo('admin'), updateSubCategoryValidation, updatesubCategory)
+.put(Auth.protect,  Auth.allowedTo('admin'), uploadsubCategoryImage, resizeImage, updateSubCategoryValidation, updatesubCategory)
 .delete(Auth.protect, Auth.allowedTo('admin'), deleteSubCategoryValidation, deletesubCategory);
 
 module.exports = router;
